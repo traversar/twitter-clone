@@ -8,6 +8,17 @@
     </div>
 </div>
 
+<div class='row mb-3'>
+    <div class='col-md-4 mx-auto col-10'>
+        <form class='form' method='POST' action='/create-tweet'>
+                {% csrf_token %}
+            <input type='hidden' value='/' name='next' />
+            <textarea class='form-control' name='content' placeholder='...'></textarea>
+            <button type='submit' class='btn btn-primary'>Tweet</button>
+        </form>
+    </div>
+</div>
+
 <div id='tweets' class='row'>
     Loading...
 </div>
@@ -31,7 +42,7 @@ function LikeBtn(tweet) {
 
 function formatTweetEl(tweet) {
     var formattedTweet =
-        `<div id='tweet-${tweet.id}' class='col-12 border-top border-bottom py-3 mb-4 tweet'>
+        `<div id='tweet-${tweet.id}' class='col-12 col-md-10 mx-auto border-top border-bottom py-3 mb-4 tweet'>
             <p>
                 ${tweet.content}
             </p>
