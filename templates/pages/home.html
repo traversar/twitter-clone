@@ -25,7 +25,30 @@
 
 <script>
 
+function handleTweetFormDidSubmit(event) {
+    event.preventDefault()
+    const myForm = event.target
+    const myFormData = new FormData(myForm)
+    const url = myForm.getAttribute('action')
+    const method = myForm.getAttribute('method')
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url)
+    xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+    xhr.onload = function() {
+        if(xhr.status === 201) {
+            const newTweet = xhr.response
+            const newTweetElement = formatTweetElement(newTweet)
+
+        }
+        const tweetsEl = document.getElementById('tweets')
+        loadTweets(tweetsEl)
+    }
+    xhr.send(myFormData)
+}
+
 const tweetCreateFormEl = document.getElementById("tweet-create-form")
+tweetCreateFormEl.addEventListener('submit', )
 
 const tweetsEl = document.getElementById('tweets')
 
