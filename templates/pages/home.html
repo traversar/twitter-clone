@@ -12,6 +12,7 @@
     <div class='col-md-4 mx-auto col-10'>
         <form class='form' id='tweet-create-form' method='POST' action='/create-tweet'>
             {% csrf_token %}
+            <div class='d-none alert alert-danger' id='tweet-alert-form-error'></div>
             <input type='hidden' value='/' name='next' />
             <textarea class='form-control' required='required' name='content' placeholder='...'></textarea>
             <button type='submit' class='btn btn-primary'>Tweet</button>
@@ -25,6 +26,16 @@
 
 <script>
 
+function handleTweetFormError(msg, display) {
+    var myErrorDiv = document.getElementById("tweet-create-form-error")
+    if (display === true) {
+        myErrorDiv.setAttribute("class", "alert alert-danger")
+        myErrorDiv.innerText = msg
+    } else {
+        myErrorDiv.setAttribute("class", "d-none alert alert-danger")
+    }
+}
+
 function handleTweetFormDidSubmit(event) {
     event.preventDefault()
     const myForm = event.target
@@ -37,6 +48,7 @@ function handleTweetFormDidSubmit(event) {
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     xhr.onload = function() {
         if(xhr.status === 201) {
+            handleTweetFormError("", false)
             const newTweet = xhr.response
             const newTweetJson = JSON.parse(newTweet)
             const newTweetElement = formatTweetEl(newTweetJson)
@@ -45,7 +57,19 @@ function handleTweetFormDidSubmit(event) {
             myForm.reset()
         } else if (xhr.status === 400) {
             const errorJson = xhr.response
+            const contentError = errorJson.content
+            let contentErrorMsg;
+            if (contentError) {
+                contentErrorMsg = contentError[0]
+                if (contentErrorMsg) {
+                    handleTweetFormError(contentErrorMsg, true)
+                }
+            } else {
+                alert('An error occurred, please try again.')
+            }
             console.log(errorJson)
+        } else if (xhr.status === 500) {
+            alert("There was a server error, please try again.")
         }
     }
     // xhr.onerror = function() {
