@@ -3,9 +3,10 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.http import is_safe_url
-
+from rest_framework.response import Response
 from .models import Tweet
 from .forms import TweetForm
+from .serializers import TweetSerializer
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -14,6 +15,15 @@ def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
 
 def tweet_create_view(request, *args, **kwargs):
+    if not request.user.is_authenticated:
+        return redirect(settings.LOGIN_URL)
+    serializer = TweetSerializer(data=request.POST or None)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(user=request.user or None)
+        return Response(serializer.data, status=201)
+    return Response({serializer}, status=400)
+
+def tweet_create_view_pure_django(request, *args, **kwargs):
     if not request.user.is_authenticated:
         if request.is_ajax():
             return JsonResponse({"content": ["Login to contribute!"]}, status=401)
