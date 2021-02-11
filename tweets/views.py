@@ -16,7 +16,7 @@ def home_view(request, *args, **kwargs):
 def tweet_create_view(request, *args, **kwargs):
     if not request.user.is_authenticated:
         if request.is_ajax():
-            return JsonResponse({'content':'Sign in to contribute!'}, status=401)
+            return JsonResponse({"content": ["Login to contribute!"]}, status=401)
         return redirect(settings.LOGIN_URL)
     form = TweetForm(request.POST or None)
     next_url = request.POST.get("next") or None

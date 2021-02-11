@@ -55,7 +55,7 @@ function handleTweetFormDidSubmit(event) {
             const ogHtml = tweetsContainerEl.innerHTML
             tweetsContainerEl.innerHTML = newTweetElement + ogHtml
             myForm.reset()
-        } else if (xhr.status === 400 || xhr.status === 401) {
+        } else if (xhr.status === 400) {
             const errorJson = JSON.parse(xhr.response).content
             const contentError = errorJson
             handleTweetFormError(contentError, true)
@@ -69,6 +69,8 @@ function handleTweetFormDidSubmit(event) {
                 alert('An error occurred, please try again.')
             }
             console.log(errorJson)
+        } else if (xhr.status === 401) {
+            window.location.href = "/login"
         } else if (xhr.status === 500) {
             alert("There was a server error, please try again.")
         }
