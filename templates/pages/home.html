@@ -27,7 +27,7 @@
 <script>
 
 function handleTweetFormError(msg, display) {
-    var myErrorDiv = document.getElementById("tweet-create-form-error")
+    var myErrorDiv = document.getElementById("tweet-alert-form-error")
     if (display === true) {
         myErrorDiv.setAttribute("class", "alert alert-danger")
         myErrorDiv.innerText = msg
@@ -55,9 +55,10 @@ function handleTweetFormDidSubmit(event) {
             const ogHtml = tweetsContainerEl.innerHTML
             tweetsContainerEl.innerHTML = newTweetElement + ogHtml
             myForm.reset()
-        } else if (xhr.status === 400) {
-            const errorJson = xhr.response
-            const contentError = errorJson.content
+        } else if (xhr.status === 400 || xhr.status === 401) {
+            const errorJson = JSON.parse(xhr.response).content
+            const contentError = errorJson
+            handleTweetFormError(contentError, true)
             let contentErrorMsg;
             if (contentError) {
                 contentErrorMsg = contentError[0]
